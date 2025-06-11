@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Factor Full Factorial</title>
+    <style>
+        body {
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size: large;
+            color: rgb(1, 31, 91);
+        }
+        #container {
+            max-width: 800px;
+            margin: auto;
+        }
+        label {
+            text-align: right;
+        }
+        input {
+            outline: 1px solid rgb(1, 31, 91);
+            text-align: center;
+            width: 50px;
+        }
+        select {
+            flex: 1;
+            text-align: center;
+            color: rgb(1, 31, 91);
+        }
+        #headerRow {
+            color:white;
+            font-weight: bold;
+            display: flex;
+        }
+        .header {
+            background-color:rgb(1, 31, 91);
+            text-align: center;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            flex: 1;
+        }
+        #signIn {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #prompt {
+            text-align: center
+        }
+        #inputControl {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        #numberControl {
+            display: flex;
+            gap: 5px;
+        }
+        .experiment {
+            display: flex;
+        }
+        #experiments {
+            margin: 20px;
+        }
+        .outputRow {
+            text-align: center;
+        }
+        button {
+            background-color: rgb(153, 0, 0);
+            color: white;
+            padding: 5px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: large;
+            cursor: pointer;
+            border: none
+        }
+        button:hover {
+            background-color: rgb(100, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <p id="prompt">Click on your name to start your assignment</p>
+        <div id="signIn"></div>
+        <div id="inputControl">
+            <div id="numberControl"> </div>
+        </div>
+        <div id="experiments"></div>
+        <div id="output"></div>
+    </div>
+    <script>
+        let userIndex;
+        let users = ["Mingchen Guo", "Donghyun Kim", "Youxi Lin","Han Hui Ling", "Xinyu Liu", "Zihan Ma", "William McBride", "Nikhilesh Pediredla", "Manasvi Rajendra", "Olivia Vlad", "Andrew Zhang"];
+        let factors = [
+            [
+                {
+                    name: "Depth in meters",
+                    lowerLimit: 1.5,
+                    upperLimit: 2.0
+                },
+                {
+                    name: "Wheel Size in cm",
+                    lowerLimit: 4,
+                    upperLimit: 6
+                },
+                {
+                    name: "Position",
+                    lowerLimit: "Left",
+                    upperLimit: "Right"
+                }
+            ],
+            [
+                {
+                    name: "Viscosity in mPa sec",
+                    lowerLimit: 20,
+                    upperLimit: 50
+                },
+                {
+                    name: "Brand",
+                    lowerLimit: "X",
+                    upperLimit: "Y"
+                },
+                {
+                    name: "Concentration in %",
+                    lowerLimit: 12,
+                    upperLimit: 23
+                }
+            ],
+            [
+                {
+                    name: "Light Level in Lumens",
+                    lowerLimit: 400,
+                    upperLimit: 1200
+                },
+                {
+                    name: "Color",
+                    lowerLimit: "Red",
+                    upperLimit: "Blue"
+                },
+                {
+                    name: "Time of Day",
+                    lowerLimit: "AM",
+                    upperLimit: "PM"
+                }
+            ],
+            [
+                {
+                    name: "Acidity in pH",
+                    lowerLimit: 6,
+                    upperLimit: 8
+                },
+                {
+                    name: "Blood Type",
+                    lowerLimit: "A",
+                    upperLimit: "B"
+                },
+                {
+                    name: "Concentration in %",
+                    lowerLimit: 20,
+                    upperLimit: 28
+                }
+            ],
+            [
+                {
+                    name: "Tension in Newtons",
+                    lowerLimit: 200,
+                    upperLimit: 300
+                },
+                {
+                    name: "Speed",
+                    lowerLimit: "Slow",
+                    upperLimit: "Fast"
+                },
+                {
+                    name: "Altitude in meters",
+                    lowerLimit: 5000,
+                    upperLimit: 10000
+                }
+            ],
+            [
+                {
+                    name: "Agitation in RPM",
+                    lowerLimit: 30,
+                    upperLimit: 60
+                },
+                {
+                    name: "Model",
+                    lowerLimit: "A",
+                    upperLimit: "B"
+                },
+                {
+                    name: "Time in Hours",
+                    lowerLimit: 2,
+                    upperLimit: 4
+                }
+            ],
+            [
+                {
+                    name: "Pressure in mmHg",
+                    lowerLimit: 400,
+                    upperLimit: 760
+                },
+                {
+                    name: "Rack Position",
+                    lowerLimit: "Bottom",
+                    upperLimit: "Top"
+                },
+                {
+                    name: "Gas Type",
+                    lowerLimit: "Nitrogen",
+                    upperLimit: "Oxygen"
+                }
+            ],
+            [
+                {
+                    name: "Voltage",
+                    lowerLimit: 1.5,
+                    upperLimit: 9
+                },
+                {
+                    name: "Inverter",
+                    lowerLimit: "On",
+                    upperLimit: "Off"
+                },
+                {
+                    name: "Frequency in Hz",
+                    lowerLimit: 60,
+                    upperLimit: 120
+                }
+            ],
+            [
+                {
+                    name: "Distance in meters",
+                    lowerLimit: 10000,
+                    upperLimit: 20000
+                },
+                {
+                    name: "Fan",
+                    lowerLimit: "Off",
+                    upperLimit: "On"
+                },
+                {
+                    name: "Power in Watts",
+                    lowerLimit: 150,
+                    upperLimit: 250
+                }
+            ],
+            [
+                {
+                    name: "Resistance in ohms",
+                    lowerLimit: 5,
+                    upperLimit: 10
+                },
+                {
+                    name: "Tension in Newtons",
+                    lowerLimit: 20,
+                    upperLimit: 40
+                },
+                {
+                    name: "Material",
+                    lowerLimit: "Copper",
+                    upperLimit: "Aluminum"
+                }
+            ],
+            [
+                {
+                    name: "Speed in m/s",
+                    lowerLimit: 30,
+                    upperLimit: 60
+                },
+                {
+                    name: "Surface",
+                    lowerLimit: "Asphalt",
+                    upperLimit: "Concrete"
+                },
+                {
+                    name: "Octane Rating",
+                    lowerLimit: 85,
+                    upperLimit: 97
+                }
+            ],
+        ]
+        let terms = [
+            [
+                {
+                    factors: [],
+                    coefficent: 34.2
+                },
+                {
+                    factors: [factors[0][0]],
+                    coefficent: 5.7
+                },
+                {
+                    factors: [factors[0][2]],
+                    coefficent: -10.5
+                },
+                {
+                    factors: [factors[0][0], factors[0][2]],
+                    coefficent: 8.6
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 42.7
+                },
+                {
+                    factors: [factors[1][1]],
+                    coefficent: -15.2
+                },
+                {
+                    factors: [factors[1][2]],
+                    coefficent: -5.4
+                },
+                {
+                    factors: [factors[1][1], factors[1][2]],
+                    coefficent: 4.1
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 1343
+                },
+                {
+                    factors: [factors[2][0]],
+                    coefficent: 23.4
+                },
+                {
+                    factors: [factors[2][1]],
+                    coefficent: 30.3
+                },
+                {
+                    factors: [factors[2][0], factors[2][1]],
+                    coefficent: 13.7
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 4.2
+                },
+                {
+                    factors: [factors[3][1]],
+                    coefficent: 0.93
+                },
+                {
+                    factors: [factors[3][2]],
+                    coefficent: -1.04
+                },
+                {
+                    factors: [factors[3][1], factors[3][2]],
+                    coefficent: 0.52
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 243
+                },
+                {
+                    factors: [factors[4][0]],
+                    coefficent: 37.5
+                },
+                {
+                    factors: [factors[4][1]],
+                    coefficent: 25.3
+                },
+                {
+                    factors: [factors[4][0], factors[4][1]],
+                    coefficent: -9.6
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 65.8
+                },
+                {
+                    factors: [factors[5][0]],
+                    coefficent: 8.4
+                },
+                {
+                    factors: [factors[5][2]],
+                    coefficent: 5.7
+                },
+                {
+                    factors: [factors[5][0], factors[5][2]],
+                    coefficent: 4.1
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 2659
+                },
+                {
+                    factors: [factors[6][1]],
+                    coefficent: 242
+                },
+                {
+                    factors: [factors[6][2]],
+                    coefficent: -307
+                },
+                {
+                    factors: [factors[6][1], factors[6][2]],
+                    coefficent: 123
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 843
+                },
+                {
+                    factors: [factors[7][0]],
+                    coefficent: 195
+                },
+                {
+                    factors: [factors[7][1]],
+                    coefficent: -273
+                },
+                {
+                    factors: [factors[7][0], factors[7][1]],
+                    coefficent: 103
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 35.1
+                },
+                {
+                    factors: [factors[8][0]],
+                    coefficent: 7.8
+                },
+                {
+                    factors: [factors[8][2]],
+                    coefficent: -10.1
+                },
+                {
+                    factors: [factors[8][0], factors[8][2]],
+                    coefficent: 3.9
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 5.7
+                },
+                {
+                    factors: [factors[9][1]],
+                    coefficent: 0.82
+                },
+                {
+                    factors: [factors[9][2]],
+                    coefficent: -1.04
+                },
+                {
+                    factors: [factors[9][1], factors[9][2]],
+                    coefficent: 0.63
+                }
+            ],
+            [
+                {
+                    factors: [],
+                    coefficent: 102
+                },
+                {
+                    factors: [factors[10][0]],
+                    coefficent: 17.2
+                },
+                {
+                    factors: [factors[10][1]],
+                    coefficent: -8.7
+                },
+                {
+                    factors: [factors[10][0], factors[10][1]],
+                    coefficent: 5.2
+                }
+            ],
+        ]
+        let noises = [1, 1, 3, 0.2, 3, 1, 40, 22, 1.2, 0.15, 1.5];
+        let buttons = [];
+        for(let user of users) {
+            let button = document.createElement("button");
+            button.textContent = user;
+            button.addEventListener("click", signIn, false);
+            document.getElementById("signIn").appendChild(button);
+            buttons.push(button);
+        }
+        function signIn(event) {
+            userIndex = buttons.indexOf(this);
+            document.getElementById("container").removeChild(document.getElementsByTagName("p")[0]);
+            document.getElementById("container").removeChild(document.getElementById("signIn"));
+            let label = document.createElement("label");
+            label.textContent = "Number of Experiments";
+            document.getElementById("numberControl").appendChild(label);
+            let input = document.createElement("input");
+            input.id = "numberOfExperiments";
+            input.setAttribute("type", "number");
+            document.getElementById("numberControl").appendChild(input);
+            let button = document.createElement("button");
+            button.textContent = "Set the Number of Experiments"
+            document.getElementById("inputControl").appendChild(button);
+            button.addEventListener("click", createDesign, false);
+            window.addEventListener("keydown", createDesign, false);
+            input.focus();
+        }
+        class Design {
+            constructor(factors, terms, noise) {
+                this.element = document.getElementById("experiments");
+                this.numberOfFactors = factors.length;
+                this.factors = factors;
+                this.experiments = this.createExperiments();
+                this.terms = terms;
+                this.noise = noise;
+                this.output = document.getElementById("output");
+                this.generateOutput();
+            }
+            createExperiments() {
+                let numberOfExperiments = Number(document.getElementById("numberOfExperiments").value);
+                if(numberOfExperiments == 0) {
+                    return;
+                }
+
+                if(!document.getElementById("headerRow")){
+                    let headerRow = document.createElement("div");
+                    headerRow.id = "headerRow";
+                    this.element.appendChild(headerRow);
+                    for(let factor of this.factors) {
+                        let header = document.createElement("div");
+                        header.className = "header";
+                        header.textContent = factor.name;
+                        headerRow.appendChild(header);
+                    }
+                }
+                let numberOfExistingExperiments = this.element.getElementsByClassName("experiment").length;
+                let experiments = [];
+                if(numberOfExperiments >= numberOfExistingExperiments) {
+                    for(let i = 0; i < numberOfExistingExperiments; i++) {
+                        experiments.push(new Experiment(this, i, false));
+                    }
+                    for(let i = numberOfExistingExperiments; i < numberOfExperiments; i++) {
+                        experiments.push(new Experiment(this, i, true));
+                    }
+                    return experiments;
+                }
+                //If we get here, then we need to remove experiments from the bottom
+                //first, we'll generate the existing experiments anew without creating new DOM elements
+                for(let i = 0; i < numberOfExperiments; i++) {
+                    experiments.push(new Experiment(this, i, false))
+                }
+                //then we will remove DOM element we no longer need
+                for(let experimentIndex = numberOfExistingExperiments - 1; experimentIndex > numberOfExperiments - 1; experimentIndex--) {
+                    this.element.removeChild(this.element.getElementsByClassName("experiment")[experimentIndex]);
+                }
+                return experiments;
+            }
+
+            generateOutput() {
+                while (this.output.getElementsByTagName("div").length > 0) {
+                    this.output.removeChild(this.output.getElementsByTagName("div")[0]);
+                }
+                let div = document.createElement("div");
+                div.className = "outputRow";
+                this.output.appendChild(div);
+                let text = "";
+                for (let factor of this.factors) {
+                    text = text + factor.name + ",";
+                }
+                div.textContent = text + "Response";
+                for (let experiment of this.experiments) {
+                    experiment.generateOutput();
+                }
+            }
+        }
+        class Experiment {
+            constructor(design, index, buildElementsInDOM) {
+                this.design = design;
+                this.index = index;
+                this.buildElementsInDOM = buildElementsInDOM;
+                this.element = design.element.getElementsByClassName("experiment")[index];
+                if(this.buildElementsInDOM) {
+                    this.element = document.createElement("div");
+                    this.element.className = "experiment";
+                    this.design.element.appendChild(this.element);
+                }
+                this.factors = structuredClone(design.factors);
+                if(buildElementsInDOM) {
+                    for(let factor of this.factors) {
+                        let element = document.createElement("select");
+                        element.className = "factor";
+                        this.element.appendChild(element);
+                        factor.element = element;
+                        element.factor = factor;
+                        factor.experiment = this;
+                        let lower = document.createElement("option");
+                        lower.value = -1;
+                        lower.textContent = factor.lowerLimit;
+                        element.appendChild(lower);
+                        let upper = document.createElement("option");
+                        upper.value = 1;
+                        upper.textContent = factor.upperLimit;
+                        element.appendChild(upper);
+                        element.addEventListener("change", () => this.design.generateOutput(), false);
+                    }
+                    return;
+                }
+                for(let i = 0; i < this.factors.length; i++) {
+                    let factor = this.factors[i];
+                    factor.element = this.element.getElementsByTagName("select")[i];
+                    factor.element.factor = factor;
+                    factor.experiment = this;
+                }
+            }
+
+            generateOutput() {
+                let div = document.createElement("div");
+                div.className = "outputRow";
+                this.design.output.appendChild(div);
+                let text = "";
+                for (let factor of this.factors) {
+                    text = text + factor.element.value + ",";
+                }
+                div.textContent = text + this.generateResponse();
+            }
+
+            generateResponse() {
+                let response = 0;
+                for (let term of this.design.terms) {
+                    let value = term.coefficent;
+                    for (let factor of term.factors) {
+                        value = value * this.factors[this.design.factors.indexOf(factor)].element.value;
+                    }
+                    response = response + value;
+                }
+                response = response + this.generateNoise(this.design.noise);
+                return response.toFixed(2);
+            }
+
+            generateNoise(noise) {
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                return noise * z0;
+            }
+        }
+        function createDesign() {
+            if(event.type == "keydown" && event.key !== "Enter") {
+                return;
+            }
+            let myDesign = new Design(factors[userIndex], terms[userIndex], noises[userIndex]);
+        }
+    </script>
+</body>
+</html>
