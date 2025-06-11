@@ -39,14 +39,18 @@
             padding-bottom: 5px;
             flex: 1;
         }
+        #promptContainer {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
         #signIn {
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-        }
-        #prompt {
-            text-align: center
         }
         #inputControl {
             display: flex;
@@ -84,7 +88,9 @@
 </head>
 <body>
     <div id="container">
-        <p id="prompt">Click on your name to start your assignment</p>
+        <div id="promptContainer">
+            <span id="prompt"></span>
+        </div>
         <div id="signIn"></div>
         <div id="inputControl">
             <div id="numberControl"> </div>
@@ -93,7 +99,6 @@
         <div id="output"></div>
     </div>
     <script>
-        let userIndex;
         let users = ["Mingchen Guo", "Donghyun Kim", "Youxi Lin","Han Hui Ling", "Xinyu Liu", "Zihan Ma", "William McBride", "Nikhilesh Pediredla", "Manasvi Rajendra", "Olivia Vlad", "Andrew Zhang"];
         let factors = [
             [
@@ -282,7 +287,7 @@
                     lowerLimit: 85,
                     upperLimit: 97
                 }
-            ],
+            ]
         ]
         let terms = [
             [
@@ -482,29 +487,33 @@
                     factors: [factors[10][0], factors[10][1]],
                     coefficent: 5.2
                 }
-            ],
+            ]
         ]
         let noises = [1, 1, 3, 0.2, 3, 1, 40, 22, 1.2, 0.15, 1.5];
-        let buttons = [];
-        for(let user of users) {
-            let button = document.createElement("button");
-            button.textContent = user;
-            button.addEventListener("click", signIn, false);
-            document.getElementById("signIn").appendChild(button);
-            buttons.push(button);
-        }
+        let userIndex;
+        let buttons;
+        reset();
+        
         function signIn(event) {
             userIndex = buttons.indexOf(this);
-            document.getElementById("container").removeChild(document.getElementsByTagName("p")[0]);
-            document.getElementById("container").removeChild(document.getElementById("signIn"));
+            let signIn = document.getElementById("signIn");
+            while(signIn.children.length > 0) {
+                signIn.removeChild(signIn.children[0]);
+            }
+            document.getElementById("prompt").textContent = "This assignment is for " + users[userIndex] + ".";
+            let button = document.createElement("button");
+            button.textContent = "Change Student";
+            document.getElementById("promptContainer").appendChild(button);
+            button.addEventListener("click", reset, false);
             let label = document.createElement("label");
+            label.setAttribute("for", "numberOfExperiments");
             label.textContent = "Number of Experiments";
             document.getElementById("numberControl").appendChild(label);
             let input = document.createElement("input");
             input.id = "numberOfExperiments";
             input.setAttribute("type", "number");
             document.getElementById("numberControl").appendChild(input);
-            let button = document.createElement("button");
+            button = document.createElement("button");
             button.textContent = "Set the Number of Experiments"
             document.getElementById("inputControl").appendChild(button);
             button.addEventListener("click", createDesign, false);
@@ -648,6 +657,36 @@
                 const u2 = Math.random();
                 const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
                 return noise * z0;
+            }
+        }
+        function reset() {
+            document.getElementById("prompt").textContent = "Click on your name to start your assignment."
+            let changeButton = document.getElementById("promptContainer").getElementsByTagName("button")[0];
+            if(changeButton) {
+                document.getElementById("promptContainer").removeChild(changeButton);
+            }
+            let controlDiv = document.getElementById("numberControl");
+            if(controlDiv.children.length > 0) {
+                controlDiv.removeChild(controlDiv.getElementsByTagName("label")[0]);
+                controlDiv.removeChild(document.getElementById("numberOfExperiments"));
+                controlDiv = document.getElementById("inputControl");
+                controlDiv.removeChild(controlDiv.getElementsByTagName("button")[0]);
+            }
+            let expContainer = document.getElementById("experiments");
+            while(expContainer.children.length > 0) {
+                expContainer.removeChild(expContainer.children[0]);
+            }
+            let outputContainer = document.getElementById("output");
+            while(outputContainer.children.length > 0) {
+                outputContainer.removeChild(outputContainer.children[0]);
+            }
+            buttons = [];
+            for(let user of users) {
+                let button = document.createElement("button");
+                button.textContent = user;
+                button.addEventListener("click", signIn, false);
+                document.getElementById("signIn").appendChild(button);
+                buttons.push(button);
             }
         }
         function createDesign() {
