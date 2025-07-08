@@ -609,20 +609,7 @@
             button.textContent = "Change Student";
             document.getElementById("promptContainer").appendChild(button);
             button.addEventListener("click", reset, false);
-            let label = document.createElement("label");
-            label.setAttribute("for", "numberOfExperiments");
-            label.textContent = "Number of Experiments";
-            document.getElementById("numberControl").appendChild(label);
-            let input = document.createElement("input");
-            input.id = "numberOfExperiments";
-            input.setAttribute("type", "number");
-            document.getElementById("numberControl").appendChild(input);
-            button = document.createElement("button");
-            button.textContent = "Set the Number of Experiments"
-            document.getElementById("inputControl").appendChild(button);
-            button.addEventListener("click", createDesign, false);
-            window.addEventListener("keydown", createDesign, false);
-            input.focus();
+            createDesign();
         }
         class Design {
             constructor(factors, terms, noise) {
@@ -636,11 +623,7 @@
                 this.generateOutput();
             }
             createExperiments() {
-                let numberOfExperiments = Number(document.getElementById("numberOfExperiments").value);
-                if(numberOfExperiments == 0) {
-                    return;
-                }
-
+                let numberOfExperiments = 8;
                 if(!document.getElementById("headerRow")){
                     let headerRow = document.createElement("div");
                     headerRow.id = "headerRow";
@@ -696,6 +679,7 @@
             constructor(design, index, buildElementsInDOM) {
                 this.design = design;
                 this.index = index;
+                this.binaryNumber = index.toString(2).padStart(3, 0);
                 this.buildElementsInDOM = buildElementsInDOM;
                 this.element = design.element.getElementsByClassName("experiment")[index];
                 if(this.buildElementsInDOM) {
@@ -705,7 +689,8 @@
                 }
                 this.factors = structuredClone(design.factors);
                 if(buildElementsInDOM) {
-                    for(let factor of this.factors) {
+                    for(let factorIndex = 0; factorIndex < this.factors.length; factorIndex++) {
+                        let factor = this.factors[factorIndex];
                         let element = document.createElement("select");
                         element.className = "factor";
                         this.element.appendChild(element);
@@ -720,6 +705,10 @@
                         upper.value = 1;
                         upper.textContent = factor.upperLimit;
                         element.appendChild(upper);
+                        let position = 2 - factorIndex;
+                        let value = Number(this.binaryNumber.charAt(position));
+                        value = 2 * value - 1;
+                        element.value = value;
                         element.addEventListener("change", () => this.design.generateOutput(), false);
                     }
                     return;
